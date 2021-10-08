@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:27 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/07 20:43:41 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/08 19:36:18 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void    init_forks()
     while (++i < g_orch.np)
     {
         g_orch.forks[i] = 0;
-        g_orch.mutex[i] = (pthread_mutex_t)PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+        pthread_mutex_init(&g_orch.mutex[i], NULL);
     }
 }
 
@@ -34,16 +34,16 @@ void    init_philos()
     i = -1;
     while (++i < g_orch.np)
     {
+        g_orch.philos[i].td = getcurrenttime() + g_orch.td;
         g_orch.philos[i].id = i;
-        g_orch.philos[i].can_eat = FALSE;
     }
 }
 
 void    init(char **argv)
 {
     g_orch.np = atoi(argv[1]);
-    g_orch.td = atoi(argv[2]) * 1000;
-    g_orch.te = atoi(argv[3]) * 1000;
+    g_orch.td = atoi(argv[2]);
+    g_orch.te = atoi(argv[3]);
     g_orch.ts = atoi(argv[4]);
     init_forks();
     init_philos();

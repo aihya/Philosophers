@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:25 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/07 20:18:38 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/08 20:14:02 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@
 
 typedef enum {NOT_TAKEN, TAKEN} e_available;
 typedef enum {FALSE, TRUE} e_bool;
-typedef enum {DEAD, EATING, SLEEPING, THINKING} e_action;
+typedef enum {DEAD, EAT, SLEEP, THINK} e_action;
+typedef enum {LEFT, RIGHT} e_side;
 
 // number_of_philosophers
 // time_to_die
@@ -36,9 +37,9 @@ typedef enum {DEAD, EATING, SLEEPING, THINKING} e_action;
 
 typedef struct s_philo
 {
-    int id;
-    int tid;
-    int can_eat;
+    int             id;
+    int             tid;
+    int             status;
     unsigned long   td;
 }               t_philo;
 
@@ -55,11 +56,14 @@ typedef struct s_orch
     pthread_t*          tid;
     t_philo*            philos;
     t_philo*            first_blood;
-    struct timeval      ep;
+    unsigned long       timeref;
 }               t_orch;
 
+pthread_mutex_t g_mutex;
 t_orch  g_orch;
 
-void    threads_master();
+void            threads_master();
+unsigned long   getcurrenttime();
+unsigned long   timestamp();
 
 #endif
