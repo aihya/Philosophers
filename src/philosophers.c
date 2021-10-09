@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:27 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/09 19:37:37 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/09 19:48:46 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ void    init_philos()
 void    init(char **argv)
 {
     g_orch.np = atoi(argv[1]);
-    g_orch.td = atoi(argv[2]);
-    g_orch.te = atoi(argv[3]);
-    g_orch.ts = atoi(argv[4]);
+    g_orch.td = atoi(argv[2]) * 1000;
+    g_orch.te = atoi(argv[3]) * 1000;
+    g_orch.ts = atoi(argv[4]) * 1000;
     init_forks();
     init_philos();
     pthread_mutex_init(&g_orch.output, NULL);
