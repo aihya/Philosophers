@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 11:26:28 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/08 20:35:45 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/09 19:39:40 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,131 +14,123 @@
 
 void     feedback(int id, char* msg)
 {
-    pthread_mutex_lock(&g_orch.output_mutex);
-    printf("%ldms\t%d %s\n", timestamp(), id, msg);
-    pthread_mutex_unlock(&g_orch.output_mutex);
+
+    pthread_mutex_lock(&g_orch.output);
+    printf("%ldms\t%d %ld %s \n", timestamp(), id, g_orch.philos[id].td, msg);
+    pthread_mutex_unlock(&g_orch.output);
 }
 
-int     pick_fork(int side, t_philo* p)
+void    lock(int side, t_philo* p)
 {
-    int picked;
-    int idx;
+    pthread_mutex_lock(&g_orch.forks[(p->id + side) % g_orch.np]);
+}
 
-    idx = p->id;
-    if (side == RIGHT)
-        idx = (p->id + 1) % g_orch.np;
-    picked = -1;
-    pthread_mutex_lock(&g_orch.mutex[idx]);
-    if (g_orch.forks[idx] == NOT_TAKEN)
+void    pick_forks(t_philo* p)
+{
+    if (p->id % 2 == 0)
     {
-        g_orch.forks[idx] = TAKEN;
-        feedback(p->id, "has taken a fork");
-        picked = idx;
+        lock(L, p);
+        feedback(p->id, "picked L fork");
+        lock(R, p);
+        feedback(p->id, "picked R fork");
     }
-    pthread_mutex_unlock(&g_orch.mutex[idx]);
-    return (picked);
+    else
+    {
+        lock(R, p);
+        feedback(p->id, "picked R fork");
+        lock(L, p);
+        feedback(p->id, "picked L fork");
+    }
 }
 
-void    drop_fork(int side, t_philo* p)
+void    unlock(int side, t_philo* p)
 {
-    int idx;
-
-    idx = p->id;
-    if (side == RIGHT)
-        idx = (p->id + 1) % g_orch.np;
-    pthread_mutex_lock(&g_orch.mutex[idx]);
-    g_orch.forks[idx] = NOT_TAKEN;
-    // feedback(p->id, "has dropped a fork");
-    pthread_mutex_unlock(&g_orch.mutex[idx]);
+    pthread_mutex_unlock(&g_orch.forks[(p->id + side) % g_orch.np]);
 }
 
-int     eating(t_philo* p)
+void    drop_forks(t_philo* p)
 {
-    // int state;
+    unlock(L, p);
+    unlock(R, p);
+}
 
-    // state = FALSE;
-    // if (pick_fork(LEFT, p))
-    // {
-        // if (pick_fork(RIGHT, p))
-        // {
-            feedback(p->id, "is eating");
-            usleep(g_orch.te);
-            drop_fork(RIGHT, p);
-            p->td += g_orch.td;
-            // state = TRUE;
-        // }
-            // drop_fork(LEFT, p);
-    // }
-    return (0);
+void    eating(t_philo* p)
+{
+    pick_forks(p);
+    p->td += g_orch.td;
+    feedback(p->id, "is \x1b[32meating\x1b[0m");
+    usleep(g_orch.te);
+    drop_forks(p);
 }
 
 void     sleeping(t_philo* p)
 {
-    feedback(p->id, "is sleeping");
+    feedback(p->id, "is \x1b[33msleeping\x1b[0m");
     usleep(g_orch.ts);
 }
 
 void     thinking(t_philo* p)
 {
-    feedback(p->id, "is thinking");
+    feedback(p->id, "is \x1b[34mthinking\x1b[0m");
 }
 
-void*    philosopher(void* arg)
+void*    thread(void* arg)
 {
     t_philo *p;
-    int     l_fork;
-    int     r_fork;
 
     p = (t_philo*)arg;
     if (p)
     {
-        while (getcurrenttime() < p->td)
+        p->td = getcurrenttime() + g_orch.td;
+        while (TRUE)
         {
-            p->status = -1;
-            
-            l_fork = pick_fork(LEFT, p);
-            if (l_fork >= 0)
-            {
-                r_fork = pick_fork(RIGHT, p);
-                if (r_fork >= 0)
-                    p->status = EAT;
-                else
-                    drop_fork(LEFT, p);
-            }
-
-            if (p->status == EAT)
-                eating(p);
-            else if (p->status == SLEEP)
-                sleeping(p);
-            else if (p->status == THINK)
-                thinking(p);
-            // if (eating(p))
-            // {
-                // sleeping(p);
-                // thinking(p);
-            // }
-            
+            eating(p);
+            sleeping(p);
+            thinking(p);
         }
-        feedback(p->id, "DIED");
-        exit(-1);
     }
     return (NULL);
 }
 
-void            threads_master()
+void*   watcher(void* args)
 {
     int i;
-    int ret;
+    int z;
+
+    z = g_orch.np;
+    while (TRUE)
+    {
+        i = -1;
+        while (++i < z)
+        {
+            if (getcurrenttime() < g_orch.philos[i].td)
+            {
+                feedback(i, "DEAD");
+                exit(-1);
+            }
+        }
+    }
+}
+
+void            threads_master()
+{
+    int         i;
+    int         ret;
+    pthread_t   death_watcher;
 
     g_orch.tid = malloc(sizeof(pthread_t) * g_orch.np);
     if (g_orch.tid)
     {
-        g_orch.timeref = getcurrenttime();
         i = -1;
         while (++i < g_orch.np)
-            pthread_create(&g_orch.tid[i], NULL, philosopher, (void *)&g_orch.philos[i]);
-        i = -1;
-        while (++i < g_orch.np)
-            pthread_join(g_orch.tid[i], NULL);
+        {
+            pthread_create(&g_orch.tid[i], NULL, thread, (void *)&g_orch.philos[i]);
+            // pthread_detach(g_orch.tid[i]);
+        }
+        // i = -1;
+        // while (++i < g_orch.np)
+        //     pthread_join(g_orch.tid[i], NULL);
+        pthread_create(&death_watcher, NULL, watcher, NULL);
+        pthread_join(death_watcher, NULL);
     }
 }

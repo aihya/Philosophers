@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:25 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/08 20:14:02 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/09 17:48:57 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,9 @@
 # include <sys/time.h>
 # include <errno.h>
 
-typedef enum {NOT_TAKEN, TAKEN} e_available;
 typedef enum {FALSE, TRUE} e_bool;
-typedef enum {DEAD, EAT, SLEEP, THINK} e_action;
-typedef enum {LEFT, RIGHT} e_side;
+typedef enum {NONE, EAT, SLEEP, THINK} e_action;
+typedef enum {L, R} e_side;
 
 // number_of_philosophers
 // time_to_die
@@ -50,9 +49,8 @@ typedef struct s_orch
     unsigned int        te;
     unsigned int        ts;
     unsigned int        nts;
-    unsigned int*       forks;
-    pthread_mutex_t*    mutex;
-    pthread_mutex_t     output_mutex;
+    pthread_mutex_t*    forks;
+    pthread_mutex_t     output;
     pthread_t*          tid;
     t_philo*            philos;
     t_philo*            first_blood;
