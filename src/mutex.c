@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   time.c                                             :+:      :+:    :+:   */
+/*   mutex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/08 19:08:02 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/14 11:51:06 by aihya            ###   ########.fr       */
+/*   Created: 2021/10/15 11:17:49 by aihya             #+#    #+#             */
+/*   Updated: 2021/10/15 11:18:13 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-unsigned long   getcurrenttime()
+void    lock(int side, t_philo* p)
 {
-    struct timeval  tv;
-
-    gettimeofday(&tv, NULL);
-    return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	pthread_mutex_lock(&g_orch.forks[(p->id + side) % g_orch.np]);
 }
 
-unsigned long   timestamp(unsigned long ref)
+void    unlock(int side, t_philo* p)
 {
-    return (getcurrenttime() - ref);
+	pthread_mutex_unlock(&g_orch.forks[(p->id + side) % g_orch.np]);
 }

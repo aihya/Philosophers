@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:27 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/09 19:48:46 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/14 12:18:50 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,16 @@ void    init_philos()
     g_orch.philos = malloc(sizeof(t_philo) * g_orch.np);
     i = -1;
     while (++i < g_orch.np)
+    {
+        g_orch.philos[i].te = getcurrenttime();
         g_orch.philos[i].id = i;
+    }
 }
 
 void    init(char **argv)
 {
     g_orch.np = atoi(argv[1]);
-    g_orch.td = atoi(argv[2]) * 1000;
+    g_orch.td = atoi(argv[2]);
     g_orch.te = atoi(argv[3]) * 1000;
     g_orch.ts = atoi(argv[4]) * 1000;
     init_forks();
