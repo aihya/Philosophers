@@ -6,25 +6,23 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 11:26:28 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/15 12:18:24 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/16 16:01:12 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void     feedback(int id, char* msg)
+void	feedback(int id, char* msg)
 {
 	unsigned long   ts;
-	unsigned long   lv;
 
 	ts = timestamp(g_orch.timeref);
-	lv = timestamp(g_orch.philos[id].te);
 	pthread_mutex_lock(&g_orch.output);
-	printf("%ldms\t%d\t%ld\t%s \n", ts, id, lv, msg);
+	printf("%ldms\t%d\t%s\n", ts, id + 1, msg);
 	pthread_mutex_unlock(&g_orch.output);
 }
 
-void*    thread(void* arg)
+void*	thread(void* arg)
 {
 	t_philo			*p;
 	unsigned long	t;
@@ -38,20 +36,17 @@ void*    thread(void* arg)
 			_sleep(p);
 			think(p);
 		}
-		dead = p->id + 1;
+		dead = p->id;
 	}
 	return (NULL);
 }
 
-
-void            threads_master()
+void	threads_master()
 {
 	int		i;
-	int		z;
-	int     ret;
 	t_philo	*p;
 
-	dead = 0;
+	first_enter = 0;
 	g_orch.tid = malloc(sizeof(pthread_t) * g_orch.np);
 	if (g_orch.tid)
 	{
@@ -61,9 +56,7 @@ void            threads_master()
 			p = &g_orch.philos[i];
 			pthread_create(&g_orch.tid[i], NULL, thread, (void *)p);
 		}
-		z = g_orch.np;
 		while (!dead)
-			usleep(500);
-		feedback(dead - 1, "DEAD");
+			;
 	}
 }

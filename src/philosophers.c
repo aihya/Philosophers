@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:27 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/14 12:18:50 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/16 18:41:52 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,15 @@ void    init(char **argv)
 
 int    main(int argc, char** argv)
 {
+    int ret;
+
     if (argc != 5)
         return (-1);
     g_orch.timeref = getcurrenttime();
     init(argv);
+    dead = 0;
     threads_master();
+    if (dead)
+	    feedback(dead, "\x1b[31mDEAD\x1b[0m");
     return (0);
 }

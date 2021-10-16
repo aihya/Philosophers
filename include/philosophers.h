@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:25 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/15 12:14:00 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/16 11:11:12 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,13 @@
 typedef enum {FALSE, TRUE}				e_bool;
 typedef enum {NONE, EAT, SLEEP, THINK}	e_action;
 typedef enum {L, R}						e_side;
+
+typedef struct s_queue
+{
+	int	f;
+	int	b;
+    int *queue;
+}		t_queue;
 
 typedef struct s_philo
 {
@@ -46,9 +53,11 @@ typedef struct s_orch
 	t_philo				*philos;
 	t_philo				*first_blood;
 	unsigned long		timeref;
+    t_queue				*queue;
 }						t_orch;
 
 int		dead;
+int		first_enter;
 
 pthread_mutex_t	g_mutex;
 t_orch			g_orch;
@@ -56,10 +65,10 @@ t_orch			g_orch;
 void			threads_master(void);
 unsigned long	getcurrenttime(void);
 unsigned long	timestamp(unsigned long ref);
-void    lock(int side, t_philo* p);
-void    unlock(int side, t_philo* p);
-void    eat(t_philo* p);
-void     think(t_philo* p);
-void     _sleep(t_philo* p);
-void     feedback(int id, char* msg);
+void			lock(int side, t_philo* p);
+void			unlock(int side, t_philo* p);
+void			eat(t_philo* p);
+void			think(t_philo* p);
+void			_sleep(t_philo* p);
+void			feedback(int id, char* msg);
 #endif
