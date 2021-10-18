@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/15 11:16:04 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/16 11:14:31 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/18 14:08:56 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void    pick_forks(t_philo* p)
 {
-	if (p->id % 2)
+	if (p->id % 2 == 0)
 	{
 		lock(L, p);
 		feedback(p->id, "picked L fork");
@@ -32,7 +32,7 @@ void    pick_forks(t_philo* p)
 
 void    drop_forks(t_philo* p)
 {
-	if (p->id % 2)
+	if (p->id % 2 == 0)
 	{
 		unlock(L, p);
 		unlock(R, p);

@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 11:26:28 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/16 16:01:12 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/18 14:17:33 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,9 @@ void	threads_master()
 {
 	int		i;
 	t_philo	*p;
+	int		count;
 
+	count = 0;
 	first_enter = 0;
 	g_orch.tid = malloc(sizeof(pthread_t) * g_orch.np);
 	if (g_orch.tid)
@@ -54,9 +56,18 @@ void	threads_master()
 		while (++i < g_orch.np)
 		{
 			p = &g_orch.philos[i];
-			pthread_create(&g_orch.tid[i], NULL, thread, (void *)p);
+			if (!pthread_create(&g_orch.tid[i], NULL, thread, (void *)p))
+				count++;
+			else
+				break;
+		}
+		if (count == g_orch.np)
+		{
+			printf("Error: %d/%d threads were created\n", count, g_orch.np);
+			return ;
 		}
 		while (!dead)
 			;
+    	feedback(dead, "\x1b[31mDEAD\x1b[0m");
 	}
 }

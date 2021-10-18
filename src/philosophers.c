@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/04 10:53:27 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/16 18:41:52 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/18 14:05:04 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,5 @@ int    main(int argc, char** argv)
     init(argv);
     dead = 0;
     threads_master();
-    if (dead)
-	    feedback(dead, "\x1b[31mDEAD\x1b[0m");
     return (0);
 }

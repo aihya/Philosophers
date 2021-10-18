@@ -29,7 +29,7 @@ typedef struct s_queue
 {
 	int	f;
 	int	b;
-    int *queue;
+    int *arr;
 }		t_queue;
 
 typedef struct s_philo
@@ -37,6 +37,7 @@ typedef struct s_philo
 	int				id;
 	int				tid;
 	int				status;
+	int				can_eat;
 	unsigned long	te;
 }					t_philo;
 

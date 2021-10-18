@@ -6,7 +6,7 @@
 /*   By: aihya <aihya@student.1337.ma>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/16 18:20:28 by aihya             #+#    #+#             */
-/*   Updated: 2021/10/16 18:22:01 by aihya            ###   ########.fr       */
+/*   Updated: 2021/10/18 13:43:55 by aihya            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,18 @@ void	create_queue()
 	if (queue)
 	{
 		queue->f = 0;
-		queue->b = g_orch->np - 1;
-		queue->queue = (int *)malloc(sizeof(int) * g_orch.np);
+		queue->b = g_orch.np - 1;
+		queue->arr = (int *)malloc(sizeof(int) * g_orch.np);
 	}
-	return (queue);
 }
 
-int		push_queue()
+void	push_queue(int id)
+{
+	g_orch.queue->f = (g_orch.queue->f + 1) % g_orch.np;
+	g_orch.queue->arr[g_orch.queue->f] = id;
+}
+
+void	pop_queue()
 {
 	
-	return (0);
-}
-
-int		pop_queue()
-{
-	return (0);
 }
